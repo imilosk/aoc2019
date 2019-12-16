@@ -41,12 +41,17 @@ $possibleSettings = [0, 1, 2, 3, 4];
 $maxSignal = 0;
 $settingCombinations = getAllCombos($possibleSettings);
 
+for ($i = 0; $i < 5; $i++) { 
+    $computers[$i] = new IntcodeComputer($program);
+}
+
 foreach ($settingCombinations as $settings) {
     $signal = 0;
-    foreach ($settings as $setting) {
+    for ($i = 0; $i < count($settings); $i++) {
+        $setting = $settings[$i];
         $firstArgument = true;
-        $computer = new IntcodeComputer($program);
-        $computer->execute(
+        
+        $computers[$i]->execute(
             function () use (&$setting, &$signal, &$firstArgument) {
                 if ($firstArgument && $setting !== null) {
                     $firstArgument = false;
