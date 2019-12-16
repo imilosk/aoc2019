@@ -12,23 +12,12 @@ for ($noun = 0; $noun < 100; $noun++){
         $program[2] = $verb;
 
         $computer = new IntcodeComputer($program);
-        $generator = $computer->execute();
-
-        while (!$computer->halt) {
-            $output = $generator->current();
-
-            // if - input, else - output
-            if ($output === 'Input') {
-                $generator->send($input);
-
-            } elseif ($output !== null) {
-                echo $output . PHP_EOL;
-
-                $generator->next();
-            } else {
-                $generator->next();
+        $computer->execute(
+            null, 
+            function ($output) {
+                echo $output;
             }
-        }
+        );
 
         if ($computer->program[0] === 19690720)
             break;

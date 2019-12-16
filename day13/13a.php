@@ -8,17 +8,12 @@ $program = array_map('intval', explode(',', $line));
 $instructions = [];
 
 $computer = new IntcodeComputer($program);
-$generator = $computer->execute();
-
-while (!$computer->halt) {
-    $output = $generator->current();
-
-    if ($output !== null) {
+$computer->execute(
+    null,
+    function ($output) use(&$instructions) {
         $instructions[] = $output;
-    }
-
-    $generator->next();
-}
+    }, 
+);
 
 $blockTilesNumber = 0;
 for ($i = 0; $i < count($instructions); $i += 3) {

@@ -5,27 +5,23 @@ $file = fopen("11.txt", "r");
 $line = fgets($file);
 $program = array_map('intval', explode(',', $line));
 
-$computer = new IntcodeComputer($program);
-$generator = $computer->execute();
-
 $outputCount = 0;
 $direction = 90;
 $robotPosition = [0, 0];
 $paintedPoints['0,0'] = 1;
+$colorToPaint = 0;
 
-while (!$computer->halt) {
-    $output = $generator->current();
-
-    if ($output === 'Input') {
+$computer = new IntcodeComputer($program);
+$computer->execute(
+    function () use (&$outputCount, &$direction, &$robotPosition, &$paintedPoints, &$colorToPaint ) {
         $robotPositionString = implode(',', $robotPosition);
-        if (array_key_exists($robotPositionString, $paintedPoints)) {
+        if (array_key_exists($robotPositionString, $paintedPoints))
             $input = $paintedPoints[$robotPositionString];
-        } else {
+        else 
             $input = 0;
-        }
-        $generator->send($input);
-
-    } elseif ($output !== null) {
+        return $input;
+    },
+    function ($output) use (&$outputCount, &$direction, &$robotPosition, &$paintedPoints, &$colorToPaint ) {
         $outputCount++;
         if ($outputCount === 1) {
             $colorToPaint = (int) $output;
@@ -40,10 +36,8 @@ while (!$computer->halt) {
             $robotPosition[0] += $orientationX;
             $robotPosition[1] += $orientationY;
         }
-        $generator->next();
-    }
-        
-}
+    }, 
+);
 
 $maxX = PHP_INT_MIN;
 $maxY = PHP_INT_MIN;

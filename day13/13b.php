@@ -8,15 +8,11 @@ $program = array_map('intval', explode(',', $line));
 $program[0] = 2;
 $segmentDisplay = 0;
 $inputInstruction = 1;
+$x = $y = $tileId = 0;
 
 $computer = new IntcodeComputer($program);
-$generator = $computer->execute();
-
-while (!$computer->halt) {
-    $output = $generator->current();
-
-    // if - input, else - output
-    if ($output === 'Input') {
+$computer->execute(
+    function () use(&$paddleXPosition, &$ballXPosition) {
         if ($paddleXPosition === $ballXPosition) {
             $input = 0;
         } elseif ($paddleXPosition > $ballXPosition) {
@@ -24,9 +20,9 @@ while (!$computer->halt) {
         } elseif ($paddleXPosition < $ballXPosition) {
             $input = 1;
         }
-        $generator->send($input);
-
-    } elseif ($output !== null) {
+        return $input;
+    },
+    function ($output) use(&$ballXPosition, &$paddleXPosition, &$inputInstruction, &$segmentDisplay, &$x, &$y, &$tileId) {
         if ($inputInstruction === 1) {
             $x = $output;
         } elseif ($inputInstruction === 2) {
@@ -44,10 +40,8 @@ while (!$computer->halt) {
             
         }
         $inputInstruction++;
-        $generator->next();
-    }
-    
-}
+    }, 
+);
 
 echo $segmentDisplay . PHP_EOL;
 
