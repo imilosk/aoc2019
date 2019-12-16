@@ -3,15 +3,19 @@
 class IntcodeComputer {
 
     private int   $relative_base = 0;
-    private array $program;
+    public array $program;
     public  bool  $halt = false;
 
     function __construct(array $program) {
         $this->program = $program;
     }
 
+    public function resetProgram($program) {
+        $this->program = $program;
+    }
+
     public function execute() {
-        $program = $this->program;
+        $program = &$this->program;
         $c = count($program);
         for ($i = 0; $i < $c; $i++) {
             $orig_instruction = (string)$program[$i];
@@ -129,5 +133,6 @@ class IntcodeComputer {
         
             } 
         }
+
     }
 }

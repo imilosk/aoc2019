@@ -1,5 +1,7 @@
 <?php
 
+include '../Intcode/IntcodeComputer.php';
+
 $file = fopen("2.txt","r");
 $line = fgets($file);
 
@@ -9,25 +11,29 @@ for ($noun = 0; $noun < 100; $noun++){
         $program[1] = $noun;
         $program[2] = $verb;
 
-        for ($i = 0; $i < count($program); $i++) {
-            $opcode = $program[$i];
-            // echo $opcode . PHP_EOL;
-            if ($opcode == 1) {
-                $program[$program[$i + 3]] = $program[$program[$i + 1]] + $program[$program[$i + 2]];
-                // echo $program[$i + 3] . PHP_EOL;
-                $i += 3;
-            } elseif ($opcode == 2) {
-                $program[$program[$i + 3]] = $program[$program[$i + 1]] * $program[$program[$i + 2]];
-                $i += 3;
-            } elseif ($opcode == 99) {
-                break;
+        $computer = new IntcodeComputer($program);
+        $generator = $computer->execute();
+
+        while (!$computer->halt) {
+            $output = $generator->current();
+
+            // if - input, else - output
+            if ($output === 'Input') {
+                $generator->send($input);
+
+            } elseif ($output !== null) {
+                echo $output . PHP_EOL;
+
+                $generator->next();
+            } else {
+                $generator->next();
             }
         }
 
-        if ($program[0] == 19690720)
+        if ($computer->program[0] === 19690720)
             break;
     }
-    if ($program[0] == 19690720)
+    if ($computer->program[0] === 19690720)
         break;
 }
 
