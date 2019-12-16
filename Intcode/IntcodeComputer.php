@@ -14,7 +14,7 @@ class IntcodeComputer {
         $this->program = $program;
     }
 
-    public function execute() {
+    public function execute($inputFunc = null, $outputFunc = null) {
         $program = &$this->program;
         $c = count($program);
         for ($i = 0; $i < $c; $i++) {
@@ -93,12 +93,12 @@ class IntcodeComputer {
                 $i += 3;
         
             } elseif ($opcode === 3) {
-                $input = yield 'Input';
+                $input = $inputFunc->call($this);
                 $program[$parameter1] = $input;
                 $i += 1;
         
             } elseif ($opcode === 4) {
-                yield $program[$parameter1];
+                $outputFunc->call($this, $program[$parameter1]);
                 $i += 1;
         
             } elseif ($opcode === 5) {
@@ -133,6 +133,5 @@ class IntcodeComputer {
         
             } 
         }
-
     }
 }
